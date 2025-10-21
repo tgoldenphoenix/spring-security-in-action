@@ -11,20 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+// The @Configuration annotation marks the class as a configuration class
 @Configuration
 public class ProjectConfig {
 
-    @Bean
-    SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        http.httpBasic(Customizer.withDefaults());
-
-        http.authorizeHttpRequests(
-            c -> c.anyRequest().authenticated()
-        );
-
-        return http.build();
-    }
-
+    // The @Bean annotation instructs Spring to add the returned value as a bean in the Spring context.
     @Bean
     UserDetailsService userDetailsService() {
         var user = User.withUsername("john")
@@ -35,8 +26,13 @@ public class ProjectConfig {
         return new InMemoryUserDetailsManager(user);
     }
 
+    /* When  using  the  default UserDetailsService, a PasswordEncoder  is  also  auto-configured.
+      Because  we  overrode UserDetailsService,  we  also  have  to  declare a PasswordEncoder.
+      We declare it as a bean & add it to the application context
+     */
     @Bean
     PasswordEncoder passwordEncoder() {
+        /* The NoOpPasswordEncoder instance  treats  passwords  as  plain  text.  It doesn’t encrypt or hash them. */
         return NoOpPasswordEncoder.getInstance();
     }
 }
