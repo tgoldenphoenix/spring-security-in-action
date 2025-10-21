@@ -14,54 +14,55 @@ import org.springframework.security.web.SecurityFilterChain;
 public class ProjectConfig {
 
     // default of spring boot
-    @Bean
-    SecurityFilterChain configure(HttpSecurity http) throws Exception {
-      http.httpBasic(Customizer.withDefaults());
-
-      /* configure the authorization rules at the endpoint level.
-      By calling this method, you instructed the app on how to authorize
-      the requests received on specific endpoints*/
-      http.authorizeHttpRequests(
-              c -> c.anyRequest().authenticated()
-      );
-
-      return http.build();
-    }
-
-    @Bean
-    SecurityFilterChain configure(HttpSecurity http) throws Exception {
-      http.httpBasic(Customizer.withDefaults());
-
-        http.authorizeHttpRequests(
-                c -> c.anyRequest().permitAll()
-        );
-
-        return http.build();
-    }
-
-//  @Bean
-//  SecurityFilterChain configure(HttpSecurity http) throws Exception {
-//    http.httpBasic(Customizer.withDefaults());
+//    @Bean
+//    SecurityFilterChain configure(HttpSecurity http) throws Exception {
+//      http.httpBasic(Customizer.withDefaults());
 //
-//    http.authorizeHttpRequests(
-//        c -> c.anyRequest().authenticated()
-//    );
+//      /* configure the authorization rules at the endpoint level.
+//      By calling this method, you instructed the app on how to authorize
+//      the requests received on specific endpoints*/
+//      http.authorizeHttpRequests(
+//              c -> c.anyRequest().authenticated()
+//      );
 //
-//    var user = User.withUsername("john")
-//        .password("12345")
-//        .authorities("read")
-//        .build();
-//
-//    var userDetailsService = new InMemoryUserDetailsManager(user);
-//
-//    http.userDetailsService(userDetailsService);
-//
-//    return http.build();
-//  }
+//      return http.build();
+//    }
 
-//  @Bean
-//  PasswordEncoder passwordEncoder() {
-//    return NoOpPasswordEncoder.getInstance();
-//  }
+//    @Bean
+//    SecurityFilterChain configure(HttpSecurity http) throws Exception {
+//      http.httpBasic(Customizer.withDefaults());
+//
+//      http.authorizeHttpRequests(
+//              c -> c.anyRequest().permitAll()
+//      );
+//
+//      return http.build();
+//    }
+
+  /* We can directly use the SecurityFilterChain bean to set both the UserDetails-Service and the PasswordEncoder*/
+  @Bean
+  SecurityFilterChain configure(HttpSecurity http) throws Exception {
+    http.httpBasic(Customizer.withDefaults());
+
+    http.authorizeHttpRequests(
+        c -> c.anyRequest().authenticated()
+    );
+
+    var user = User.withUsername("john")
+        .password("12345")
+        .authorities("read")
+        .build();
+
+    var userDetailsService = new InMemoryUserDetailsManager(user);
+
+    http.userDetailsService(userDetailsService);
+
+    return http.build();
+  }
+
+  @Bean
+  PasswordEncoder passwordEncoder() {
+    return NoOpPasswordEncoder.getInstance();
+  }
 
 }
